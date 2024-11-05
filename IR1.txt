@@ -1,0 +1,45 @@
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer, WordNetLemmatizer 
+
+nltk.download('stopwords')
+nltk.download('punkt')
+
+
+text_document = "Text preprocessing is an essential step in natural language processing."
+words = word_tokenize(text_document)
+
+stop_words = set(stopwords.words('english'))
+filtered_words = [word for word in words if word.lower() not in stop_words]
+print("Filtered Words:", filtered_words)
+
+stemmer = PorterStemmer()
+stemmed_words = [stemmer.stem(word) for word in filtered_words]
+print("Stemmed Words:", stemmed_words)
+
+
+lemmatizer = WordNetLemmatizer()
+lemmatized_words = [lemmatizer.lemmatize(word) for word in filtered_words]
+print("Lemmatized Words:", lemmatized_words)
+
+
+
+
+Certainly! Here’s an overview of the key concepts in **text preprocessing** for **Natural Language Processing (NLP)**:
+
+### 1. **Tokenization**
+   - Tokenization is the process of splitting text into smaller units, known as tokens. These tokens can be words, sentences, or even subwords, depending on the analysis.
+   - For example, the sentence *"Text preprocessing is essential"* could be split into the tokens `[ "Text", "preprocessing", "is", "essential" ]`.
+
+### 2. **Stop Word Removal**
+   - Stop words are common words that often carry little unique meaning in language, such as "the," "is," "in," and "an." 
+   - Removing these words helps reduce noise in the text and focuses on the more meaningful content, especially in tasks like topic modeling or information retrieval.
+
+### 3. **Stemming**
+   - Stemming reduces words to their root or base form, known as the "stem." This is done by stripping suffixes like "ing," "ly," "es," etc.
+   - For example, *“running”* becomes *“run”*, and *“processed”* might become *“process”*.
+   - While stemming makes words shorter and more uniform, it doesn't guarantee that the stemmed words are valid in English. It’s mostly useful for quickly normalizing words, especially in search engines.
+
+### 4. **Lemmatization**
+   - Lemmatization is similar to stemming but more advanced. It reduces words to their base form
