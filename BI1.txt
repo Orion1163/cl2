@@ -1,0 +1,51 @@
+dna_sequence = open(r"D:\BE\CL-2-Practice\dna_sequence.txt").read().strip()
+print(dna_sequence)
+
+gc_content = (dna_sequence.count('G') + dna_sequence.count('C')) / len(dna_sequence) *100
+print('GC COntent',gc_content)
+
+motif = 'CGT'
+motif_positions = [i for i in range(len(dna_sequence)) if dna_sequence.startswith(motif,i)]
+print("Motif",motif , 'found at positions', motif_positions)
+
+start_codon = 'ATG'
+stop_condon = ['Taa','TAG','TGA']
+coding_region=[]
+
+for i in range(len(dna_sequence)-2):
+    if dna_sequence[i:i+3] == start_codon:
+        for j in range(i+3 , len(dna_sequence)-2 , 3):
+            if dna_sequence[j:j+3] in stop_condon:
+                coding_region.append((i,j+3))
+                break
+
+if coding_region:
+    print('Coding regions found')
+    for start, end in coding_region:
+        print('Start:', start , "End", end , dna_sequence[start:end])
+else:
+    print('Not found')
+
+
+This code performs basic analysis on a DNA sequence by reading the sequence from a file and identifying certain biological patterns. Here’s a breakdown of each section:
+
+### 1. **Reading the DNA Sequence**
+   - `dna_sequence = open(...).read().strip()` reads the DNA sequence from a specified file path and removes any leading or trailing whitespace.
+
+### 2. **Calculating GC Content**
+   - `gc_content = (dna_sequence.count('G') + dna_sequence.count('C')) / len(dna_sequence) * 100` calculates the GC content, which is the percentage of guanine (G) and cytosine (C) bases in the DNA sequence. GC content is often used to gauge the stability of a DNA molecule, as GC pairs form three hydrogen bonds, making them more stable than AT pairs.
+   - The result is printed as a percentage.
+
+### 3. **Finding a Specific Motif**
+   - `motif = 'CGT'` defines a specific sequence pattern, or motif, to search for within the DNA sequence.
+   - `motif_positions = [i for i in range(len(dna_sequence)) if dna_sequence.startswith(motif, i)]` creates a list of all positions in the sequence where the motif `CGT` starts. It uses the `startswith` method to check for the motif at each position in the sequence.
+
+### 4. **Identifying Coding Regions**
+   - A coding region is typically a part of the DNA sequence that could potentially be translated into protein. A common convention for these regions is to start with a **start codon** (`ATG`) and end with a **stop codon** (`TAA`, `TAG`, or `TGA`).
+   - The code iterates through the DNA sequence to find regions that begin with `ATG` and end with one of the stop codons. When a valid coding region is identified, it is stored as a tuple `(start, end)` in the `coding_region` list.
+   - If any coding regions are found, the code prints them out with their start and end positions, as well as the sequence in each region. If no coding regions are found, it prints "Not found."
+
+### Example Output
+   - **GC Content**: Provides a percentage indicating the proportion of G and C bases in the sequence.
+   - **Motif Positions**: Lists the positions where the motif appears.
+   - **Coding Regions**: Displays the coding regions with their start and end positions, showing potential protein-coding sections within the DNA sequence.
