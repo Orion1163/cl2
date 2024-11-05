@@ -1,0 +1,78 @@
+import pandas as pd
+from pgmpy.models import BayesianNetwork
+from pgmpy.estimators import MaximumLikelihoodEstimator
+from pgmpy.inference import VariableElimination
+
+
+# Load dataset
+data = pd.read_csv("heart_cleveland_upload.csv")
+print("Dataset loaded successfully.")
+
+
+# Keeping only a few columns to reduce model complexity
+heart_disease_data = data[['age', 'sex', 'cp', 'chol', 'condition']]
+
+
+# Define a simpler Bayesian Network structure
+model = BayesianNetwork([
+    ('age', 'condition'),
+    ('sex', 'condition'),
+    ('cp', 'condition'),
+    ('chol', 'condition')
+])
+
+
+#Learn CPDs using Maximum Likelihood Estimator
+print("Learning CPDs using Maximum Likelihood Estimator...")
+model.fit(heart_disease_data, estimator=MaximumLikelihoodEstimator)
+
+
+
+# Perform inference
+heart_disease_infer = VariableElimination(model)
+
+
+# Query 1: Probability of Heart Disease given age = 50
+print("\n1. Probability of Heart Disease given evidence age=50:")
+q1 = heart_disease_infer.query(variables=['condition'], evidence={'age': 50})
+print(q1)
+
+
+# Query 2: Probability of Heart Disease given chol = 250
+print("\n2. Probability of Heart Disease given evidence chol=250:")
+q2 = heart_disease_infer.query(variables=['condition'], evidence={'chol':250})
+print(q2)
+
+
+
+
+This code builds a **Bayesian Network** to predict the likelihood of heart disease based on certain factors using the `pgmpy` library. Here’s a step-by-step explanation:
+
+### 1. **Data Loading**
+   - `data = pd.read_csv("heart_cleveland_upload.csv")`: This loads a dataset of heart disease indicators from a CSV file.
+   - `heart_disease_data` keeps only specific columns to reduce the model’s complexity, including features like age, sex, chest pain type (cp), cholesterol level (chol), and the presence of a heart condition (condition).
+
+### 2. **Defining the Bayesian Network Structure**
+   - A Bayesian Network is created with the `BayesianNetwork` class. 
+   - The network structure is specified as a list of edges, where each edge represents a dependency. Here, `condition` (the presence of heart disease) depends on `age`, `sex`, `cp`, and `chol`.
+
+### 3. **Learning Conditional Probability Distributions (CPDs)**
+   - Using `MaximumLikelihoodEstimator`, the model learns the probabilities for each variable from the data (`model.fit`).
+   - CPDs define the probability of each variable given its parent(s) in the network. Maximum Likelihood Estimation (MLE) is used to calculate these from the observed data.
+
+### 4. **Inference with Variable Elimination**
+   - `VariableElimination` is used to perform inference on the Bayesian Network, allowing us to query specific probabilities.
+   
+### 5. **Performing Queries**
+   - **Query 1**: The probability of having heart disease given that the `age` is 50.
+     ```python
+     q1 = heart_disease_infer.query(variables=['condition'], evidence={'age': 50})
+     ```
+   - **Query 2**: The probability of having heart disease given that `chol` (cholesterol level) is 250.
+     ```python
+     q2 = heart_disease_infer.query(variables=['condition'], evidence={'chol': 250})
+     ```
+   - These queries use the learned model to compute the conditional probability of `condition` based on the given evidence (age or cholesterol level).
+
+### Output
+The output of each query will display the probabilities of having or not having heart disease based on the provided evidence. This model offers insights into how different factors might affect heart disease risk based on the training data.
