@@ -1,0 +1,67 @@
+import re
+from collections import defaultdict
+
+
+documents = {
+    1: "This is the first document. It contains some text.",
+    2: "The second document is longer. It also contains some text.",
+    3: "This is the third document. It is different from the first two.",
+}
+
+def preprocess_document(doc):
+    
+    tokens = re.findall(r'\w+', doc.lower())
+    
+    stop_words = {"is", "the", "it", "and", "some"}
+    return [token for token in tokens if token not in stop_words]
+
+inverted_index = defaultdict(list)
+for doc_id, doc_text in documents.items():
+    tokens = preprocess_document(doc_text)
+    for token in tokens:
+        inverted_index[token].append(doc_id)
+
+def retrieve_documents(query):
+    query_tokens = preprocess_document(query)
+    result = set()
+    for token in query_tokens:
+        if token in inverted_index:
+            result.update(inverted_index[token])
+    return list(result)
+
+query = "document contains text"
+matching_documents = retrieve_documents(query)
+
+if matching_documents:
+    print("Matching documents for query:", query)
+    for doc_id in matching_documents:
+        print("Document", doc_id, ":", documents[doc_id])
+else:
+    print("No matching documents found.")
+
+
+
+
+This code demonstrates a simple **information retrieval** system using an **inverted index**. Here’s a breakdown of how it works:
+
+### 1. **Documents and Preprocessing**
+   - A dictionary, `documents`, holds three sample documents, each associated with a unique ID.
+   - The `preprocess_document` function takes each document, converts it to lowercase, removes stop words (common words with little meaning, like "is" and "the"), and tokenizes it (splits it into words).
+   - The `re.findall(r'\w+', doc.lower())` line finds all word-like sequences, ignoring punctuation.
+
+### 2. **Building the Inverted Index**
+   - An inverted index is a data structure used to map each word (token) to the list of documents where it appears.
+   - The code iterates through each document, preprocesses it to obtain tokens, and then updates the `inverted_index` so that each token points to a list of document IDs.
+   - For example, if the word "document" appears in documents 1, 2, and 3, `inverted_index["document"]` will contain `[1, 2, 3]`.
+
+### 3. **Retrieving Documents Based on a Query**
+   - The `retrieve_documents` function allows you to search for documents that contain words in a query.
+   - It preprocesses the query to remove stop words and retrieve tokens. Then, for each token, it checks if it’s in the inverted index and adds matching document IDs to the `result`.
+   - If any document contains one or more of the words in the query, it will be added to the result set.
+
+### 4. **Running the Query**
+   - A sample query, `"document contains text"`, is used to find documents matching any of these words.
+   - The code then prints the IDs and text of the documents that match the query.
+
+### Example Output
+For a query like `"document contains text"`, the output will display all documents containing any of these words, showing that this simple retrieval system is capable of handling basic keyword-based searches.
