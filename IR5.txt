@@ -1,0 +1,53 @@
+import numpy as np 
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# Load the Iris dataset
+iris = datasets.load_iris()
+X = iris.data
+
+# Step 1: Generate the linkage matrix and plot dendrogram
+linkage_matrix = linkage(X, method='ward')  # "ward" linkage minimizes variance within clusters
+
+plt.figure(figsize=(10, 6))
+dendrogram(linkage_matrix)
+plt.title('Hierarchical Clustering Dendrogram')
+plt.xlabel("Sample index")
+plt.ylabel("Distance")
+plt.show()
+
+# Step 2: Fit the Agglomerative Clustering model
+num_clusters = 3  # Define the number of clusters
+agg_clustering = AgglomerativeClustering(n_clusters=num_clusters, linkage='ward')
+cluster_labels = agg_clustering.fit_predict(X)
+
+# Display results
+print("Cluster assignments:")
+for i, label in enumerate(cluster_labels):
+    print(f"Data point {i} is in cluster {label}")
+
+
+
+This code demonstrates **Hierarchical Clustering** on the famous **Iris dataset**. Here’s a step-by-step explanation:
+
+### 1. **Loading the Dataset**
+   - The Iris dataset is loaded using `datasets.load_iris()`. This dataset contains measurements of 150 iris flowers across four features: sepal length, sepal width, petal length, and petal width.
+   - `X = iris.data` extracts the data points, which will be used for clustering.
+
+### 2. **Linkage Matrix and Dendrogram**
+   - **Linkage Matrix**: `linkage(X, method='ward')` computes a hierarchical clustering using Ward’s method, which minimizes variance within clusters.
+   - **Dendrogram**: The `dendrogram` function plots a tree-like structure showing the steps in hierarchical clustering. The x-axis represents individual data points, while the y-axis shows the distance (or dissimilarity) at which clusters are merged.
+   - The dendrogram is useful for visualizing the cluster hierarchy and can help in deciding the number of clusters by observing where large jumps in distance occur.
+
+### 3. **Agglomerative Clustering**
+   - **Setting Number of Clusters**: Here, `num_clusters` is set to 3, based on prior knowledge of the Iris dataset (it has three species).
+   - **Fitting the Model**: `AgglomerativeClustering` is applied with Ward’s linkage. It iteratively merges data points or clusters that are closest to each other until reaching the specified number of clusters.
+   - `cluster_labels = agg_clustering.fit_predict(X)` assigns a cluster label (0, 1, or 2) to each data point.
+
+### 4. **Displaying Cluster Assignments**
+   - Finally, the cluster assignments are printed for each data point, showing which cluster each sample belongs to.
+
+### Output
+The dendrogram gives a visual insight into the clustering structure, and the cluster assignments provide a list of labels indicating the cluster for each data point. This hierarchical approach can help uncover patterns or natural groupings within the Iris dataset.
