@@ -1,0 +1,52 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score,classification_report
+
+df = pd.read_csv('polymerase_cluster.csv')
+df.head()
+
+x = df[['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29']]
+
+y = df[['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'G9', 'G10']]
+
+
+x.head()
+y.head()
+
+X_train,X_test,y_train,y_test = train_test_split(x,y,random_state=42,test_size=0.3)
+
+random_forest = RandomForestClassifier()
+random_forest.fit(X_train,y_train)
+
+y_pred = random_forest.predict(X_test)
+
+accuracy = accuracy_score(y_test,y_pred)
+print('Accuracy-Score:- ', accuracy)
+
+class_report = classification_report(y_test,y_pred)
+print(class_report)
+
+
+This code is implementing a classification model using the Random Forest algorithm to predict clusters or groups in a dataset (`polymerase_cluster.csv`). Here’s a breakdown of each section:
+
+### 1. **Data Loading and Preparation**
+   - `df = pd.read_csv('polymerase_cluster.csv')` loads the data into a pandas DataFrame.
+   - `x` (features) is selected as columns `0` to `29`, likely representing various attributes or measurements.
+   - `y` (target) is selected as columns `G1` to `G10`, which may represent multiple target classes for classification (suggesting a multi-label classification task).
+
+### 2. **Splitting Data into Training and Testing Sets**
+   - `X_train, X_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.3)` splits the data into training and testing sets with a 70-30 split, ensuring that 30% of the data is set aside for testing.
+
+### 3. **Model Training and Prediction**
+   - `random_forest = RandomForestClassifier()` creates an instance of the `RandomForestClassifier`.
+   - `random_forest.fit(X_train, y_train)` trains the model on the training data.
+   - `y_pred = random_forest.predict(X_test)` generates predictions on the test data.
+
+### 4. **Model Evaluation**
+   - `accuracy_score(y_test, y_pred)` calculates the accuracy of the predictions.
+   - `classification_report(y_test, y_pred)` generates a report that includes precision, recall, and F1-score for each class, providing more detailed insight into the model's performance across different labels or clusters.
+
+### Notes:
+If `y` represents multiple classes per sample (multi-label classification), `RandomForestClassifier` may need additional settings or considerations for multi-label capabilities. Alternatively, `MultiOutputClassifier` could be used to wrap `RandomForestClassifier` for this scenario.
